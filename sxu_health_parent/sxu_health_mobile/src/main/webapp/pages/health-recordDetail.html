@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0,user-scalable=no,minimal-ui">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../img/asset-favico.ico">
+    <title>健康档案详情</title>
+    <link rel="stylesheet" href="../css/page-health-recordDetail.css" />
+    <script src="../plugins/jquery/dist/jquery.min.js"></script>
+    <script src="../plugins/healthmobile.js"></script>
+    <script src="../plugins/vue/vue.js"></script>
+    <script src="../plugins/vue/axios-0.18.0.js"></script>
+    <script src="../plugins/elementui/index.js"></script>
+    <script>
+        var phoneNumber = getUrlParam("phoneNumber");//获取登录手机号
+    </script>
+</head>
+
+<body data-spy="scroll" data-target="#myNavbar" data-offset="150">
+    <div class="app" id="app">
+        <!-- 页面头部 -->
+        <div class="top-header">
+            <span class="f-left"><i class="icon-back" href="index.html"></i>返回</span>
+            <span class="center">健康体检</span>
+            <span class="f-right"><i class="icon-more"></i></span>
+        </div>
+        <!-- 页面内容 -->
+        <div class="contentBox">
+            <form id='memberInfo-form'>
+                <div  class="list-content">
+                    <div class="fix-info">
+                        <ul class="list-unstyled">
+                            <!--<li><span class="tit">档案号</span><span class="info">110111001110</span></li>-->
+                            <li>
+                                <span class="name-info">姓名：{{memberInfoList.name}}</span>
+                            </li>
+                            <li>
+                                <span class="sex-info">
+                                    性别：{{memberInfoList.sex == '1' ? '男':'女'}}</span>
+                            </li>
+                            <li>
+                                <span class="idCard-info">身份证号：{{memberInfoList.idCard}}</span>
+                            </li>
+                            <li>
+                                <span class="phoneNumber-info">手机号：{{memberInfoList.phoneNumber}}</span>
+                            </li>
+                            <li>
+                                <span class="remark-info">所在院系：{{memberInfoList.remark}}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+    <!-- 页面 css js -->
+    <!-- <script src="health-index.js"></script> -->
+</body>
+<script>
+    var vue = new Vue({
+        el:'#app',
+        data:{
+            memberInfoList:{
+            }//模型数据，用于套餐列表展示
+        },
+        mounted () {
+            console.log(this.memberInfoList.phoneNumber);
+            //发送ajax请求，获取所有的套餐数据，赋值给setmealList模型数据，用于页面展示
+            axios.post("/member/getMemberInfoByTelephone.do?phoneNumber=" + phoneNumber).then((response) => {
+                if(response.data.flag) {
+                    this.$message({
+                        message: response.data.message,
+                        type: 'success'
+                    });
+                } else {
+                    this.$message.error(response.data.message);
+                }
+            });
+        },
+    });
+</script>
+</html>

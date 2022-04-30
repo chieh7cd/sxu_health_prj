@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.lanqiao.dao.RoleDao">
+
+    <!--根据用户ID查询关联的角色-->
+    <select id="findByUserId" parameterType="int" resultType="org.lanqiao.pojo.Role">
+        select r.*
+         from t_role r,t_user_role ur
+         where r.id = ur.role_id and ur.user_id = #{user_id}
+    </select>
+
+    <insert id="add" parameterType="org.lanqiao.pojo.Role">
+        insert into t_role
+        values (null,#{name},#{keyword},#{description})
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+            select LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <insert id="addRoleAndPermission" parameterType="map">
+        insert into t_role_permission
+        values (#{role_id},#{permission_id})
+    </insert>
+
+    <insert id="addRoleAndMenu" parameterType="map">
+        insert into t_role_menu
+        values (#{role_id},#{menu_id})
+    </insert>
+
+    <select id="selectByCondition" resultType="org.lanqiao.pojo.Role">
+        select * from t_role
+        <if test="queryString != null and queryString.length > 0">
+            where name like CONCAT('%',#{queryString},'%')
+        </if>
+    </select>
+
+    <select id="findPermissionIdsByRoleId" resultType="java.lang.Integer">
+        select permission_id from t_role_permission
+        where role_id = #{id}
+    </select>
+
+    <select id="findMenuIdsByRoleId" resultType="java.lang.Integer">
+        select menu_id from t_role_menu
+        where role_id = #{id}
+    </select>
+
+    <select id="findById" resultType="org.lanqiao.pojo.Role">
+        select * from t_role where id=#{id}
+    </select>
+
+    <update id="edit" parameterType="org.lanqiao.pojo.Role">
+        update t_role
+        set name = #{name},keyword = #{keyword},description = #{description}
+        where id = #{id}
+    </update>
+
+    <delete id="deletePermissionListById" parameterType="int">
+        delete from t_role_permission
+        where role_id = #{id}
+    </delete>
+
+    <delete id="deleteMenuListById" parameterType="int">
+        delete from t_role_menu
+        where role_id = #{id}
+    </delete>
+
+    <delete id="deleteRoleById" parameterType="int">
+        delete from t_role where id = #{id}
+    </delete>
+
+    <select id="findAll" resultType="org.lanqiao.pojo.Role">
+        select * from t_role
+    </select>
+
+
+</mapper>
